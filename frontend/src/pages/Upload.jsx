@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../services/api";
 
 function Upload() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -8,6 +9,27 @@ function Upload() {
 
     if (file) {
       setSelectedFile(file);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      alert("Please select a file first.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response = await api.post("/upload", formData);
+
+      console.log(response.data);
+
+      alert("File uploaded successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Upload failed!");
     }
   };
 
@@ -40,7 +62,7 @@ function Upload() {
             or
           </p>
 
-          {/* Choose File Button */}
+          {/* Choose File */}
           <label className="mt-6 cursor-pointer rounded-xl bg-blue-600 hover:bg-blue-700 transition px-8 py-3 text-lg font-semibold">
 
             Choose File
@@ -65,6 +87,14 @@ function Upload() {
               <p className="text-slate-300 mt-2 break-all">
                 {selectedFile.name}
               </p>
+
+              {/* Upload Button */}
+              <button
+                onClick={handleUpload}
+                className="mt-5 bg-green-600 hover:bg-green-700 px-8 py-3 rounded-xl text-lg font-semibold transition"
+              >
+                Upload
+              </button>
 
             </div>
           )}
