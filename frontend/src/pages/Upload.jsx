@@ -3,6 +3,9 @@ import api from "../services/api";
 
 function Upload() {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [fileName, setFileName] = useState("");
+  const [rows, setRows] = useState(0);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -26,7 +29,10 @@ function Upload() {
 
       console.log(response.data);
 
-      alert("File uploaded successfully!");
+      setTransactions(response.data.transactions);
+      setFileName(response.data.filename);
+      setRows(response.data.rows);
+
     } catch (error) {
       console.error(error);
       alert("Upload failed!");
@@ -34,9 +40,9 @@ function Upload() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6 py-10">
 
-      <div className="w-full max-w-2xl rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-10">
+      <div className="w-full max-w-5xl rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-10">
 
         {/* Heading */}
         <h1 className="text-5xl font-bold text-center">
@@ -100,6 +106,80 @@ function Upload() {
           )}
 
         </div>
+
+        {/* Transaction Table */}
+        {transactions.length > 0 && (
+          <div className="mt-10">
+
+            <h2 className="text-2xl font-bold">
+              Uploaded Statement
+            </h2>
+
+            <p className="text-slate-400 mt-2">
+              <strong>File:</strong> {fileName}
+            </p>
+
+            <p className="text-slate-400 mb-6">
+              <strong>Total Transactions:</strong> {rows}
+            </p>
+
+            <div className="overflow-x-auto rounded-xl border border-slate-700">
+
+              <table className="w-full text-sm">
+
+                <thead className="bg-slate-800">
+
+                  <tr>
+                    <th className="p-3">Date</th>
+                    <th className="p-3">Description</th>
+                    <th className="p-3">Debit</th>
+                    <th className="p-3">Credit</th>
+                    <th className="p-3">Balance</th>
+                  </tr>
+
+                </thead>
+
+                <tbody>
+
+                  {transactions.map((item, index) => (
+
+                    <tr
+                      key={index}
+                      className="border-t border-slate-700 hover:bg-slate-800 transition"
+                    >
+
+                      <td className="p-3 text-center">
+                        {item.Date}
+                      </td>
+
+                      <td className="p-3">
+                        {item.Description}
+                      </td>
+
+                      <td className="p-3 text-center text-red-400">
+                        {item.Debit || "-"}
+                      </td>
+
+                      <td className="p-3 text-center text-green-400">
+                        {item.Credit || "-"}
+                      </td>
+
+                      <td className="p-3 text-center">
+                        {item.Balance}
+                      </td>
+
+                    </tr>
+
+                  ))}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+        )}
 
       </div>
 
