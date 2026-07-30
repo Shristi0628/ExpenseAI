@@ -27,6 +27,12 @@ function Upload() {
     try {
       const response = await api.post("/upload", formData);
 
+      // Save transactions for Dashboard
+      localStorage.setItem(
+      "transactions",
+      JSON.stringify(response.data.transactions)
+    );
+
       console.log(response.data);
 
       setTransactions(response.data.transactions);
@@ -36,6 +42,8 @@ function Upload() {
     } catch (error) {
       console.error(error);
       alert("Upload failed!");
+
+      window.location.href = "/dashboard";
     }
   };
 
