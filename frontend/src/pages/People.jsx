@@ -109,6 +109,16 @@ function People() {
       }));
   }, [transactions, selectedPerson]);
 
+  const selectedPersonTotal = selectedPersonPayments.reduce(
+    (sum, payment) => sum + payment.amount,
+    0
+  );
+
+  const selectedPersonAverage =
+    selectedPersonPayments.length > 0
+    ? selectedPersonTotal / selectedPersonPayments.length
+    : 0;
+
   // Format date
   const formatDate = (dateValue) => {
     if (!dateValue) return "-";
@@ -237,113 +247,151 @@ function People() {
       {selectedPerson && (
         <div className="mt-10">
 
-          {/* History Header */}
-          <div className="flex justify-between items-center mb-6">
+    {/* History Header */}
+    <div className="flex justify-between items-center mb-6">
 
-            <div>
-              <h2 className="text-3xl font-bold">
-                👤 {selectedPerson} - Payment History
-              </h2>
+      <div>
+        <h2 className="text-3xl font-bold">
+          👤 {selectedPerson} - Payment History
+        </h2>
 
-              <p className="text-slate-400 mt-1">
-                {selectedPersonPayments.length} payments made
-              </p>
-            </div>
+        <p className="text-slate-400 mt-1">
+          Detailed payment history
+        </p>
+      </div>
 
-            <button
-              onClick={() => setSelectedPerson(null)}
-              className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 transition"
-            >
-              Close
-            </button>
+      <button
+        type="button"
+        onClick={() => setSelectedPerson(null)}
+        className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 transition"
+      >
+        Close
+      </button>
 
-          </div>
+    </div>
 
-          {/* Payment History Table */}
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+    {/* Summary Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
-            <div className="overflow-x-auto">
+      {/* Total Paid */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <p className="text-sm text-slate-400">
+          Total Paid
+        </p>
 
-              <table className="w-full">
+        <p className="text-2xl font-bold text-red-400 mt-2">
+          ₹ {selectedPersonTotal.toLocaleString()}
+        </p>
+      </div>
 
-                <thead className="bg-slate-800">
+      {/* Number of Payments */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <p className="text-sm text-slate-400">
+          Number of Payments
+        </p>
 
-                  <tr>
+        <p className="text-2xl font-bold text-purple-400 mt-2">
+          {selectedPersonPayments.length}
+        </p>
+      </div>
 
-                    <th className="p-4 text-left">
-                      #
-                    </th>
+      {/* Average Payment */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <p className="text-sm text-slate-400">
+          Average Payment
+        </p>
 
-                    <th className="p-4 text-left">
-                      Date
-                    </th>
+        <p className="text-2xl font-bold text-blue-400 mt-2">
+          ₹ {Math.round(selectedPersonAverage).toLocaleString()}
+        </p>
+      </div>
 
-                    <th className="p-4 text-left">
-                      Description
-                    </th>
+    </div>
 
-                    <th className="p-4 text-right">
-                      Amount
-                    </th>
+    {/* Payment History Table */}
+    <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
 
-                  </tr>
+      <div className="overflow-x-auto">
 
-                </thead>
+        <table className="w-full">
 
-                <tbody>
+          <thead className="bg-slate-800">
 
-                  {selectedPersonPayments.map((payment, index) => (
-                    <tr
-                      key={index}
-                      className="border-t border-slate-800 hover:bg-slate-800 transition"
-                    >
+            <tr>
 
-                      <td className="p-4 text-slate-400">
-                        {index + 1}
-                      </td>
+              <th className="p-4 text-left">
+                #
+              </th>
 
-                      <td className="p-4 text-slate-300 whitespace-nowrap">
-                        {formatDate(payment.date)}
-                      </td>
+              <th className="p-4 text-left">
+                Date
+              </th>
 
-                      <td className="p-4 text-slate-300">
-                        {payment.description}
-                      </td>
+              <th className="p-4 text-left">
+                Description
+              </th>
 
-                      <td className="p-4 text-right text-red-400 font-bold whitespace-nowrap">
-                        ₹ {payment.amount.toLocaleString()}
-                      </td>
+              <th className="p-4 text-right">
+                Amount
+              </th>
 
-                    </tr>
-                  ))}
+            </tr>
 
-                  {selectedPersonPayments.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan="4"
-                        className="p-8 text-center text-slate-400"
-                      >
-                        No payment history found.
-                      </td>
-                    </tr>
-                  )}
+          </thead>
 
-                </tbody>
+          <tbody>
 
-              </table>
+            {selectedPersonPayments.map((payment, index) => (
+              <tr
+                key={index}
+                className="border-t border-slate-800 hover:bg-slate-800 transition"
+              >
 
-            </div>
+                <td className="p-4 text-slate-400">
+                  {index + 1}
+                </td>
 
-          </div>
+                <td className="p-4 text-slate-300 whitespace-nowrap">
+                  {formatDate(payment.date)}
+                </td>
 
-        </div>
-      )}
+                <td className="p-4 text-slate-300">
+                  {payment.description}
+                </td>
 
-      {/* Monthly Payments */}
-      <div className="mt-10">
+                <td className="p-4 text-right text-red-400 font-bold whitespace-nowrap">
+                  ₹ {payment.amount.toLocaleString()}
+                </td>
+
+              </tr>
+            ))}
+
+            {selectedPersonPayments.length === 0 && (
+              <tr>
+                <td
+                  colSpan="4"
+                  className="p-8 text-center text-slate-400"
+                >
+                  No payment history found.
+                </td>
+              </tr>
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+<div className="mt-10">
 
         <h2 className="text-3xl font-bold mb-6">
-          Monthly Payments
+        Monthly Payments
         </h2>
 
         <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-x-auto">
